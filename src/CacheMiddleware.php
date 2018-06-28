@@ -10,8 +10,8 @@
 namespace FastD\CacheProvider;
 
 use FastD\Http\Response;
+use FastD\Middleware\DelegateInterface;
 use FastD\Utils\DateObject;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -21,9 +21,8 @@ class CacheMiddleware extends Middleware
 {
     /**
      * @param ServerRequestInterface $request
-     * @param DelegateInterface      $next
-     *
-     * @return ResponseInterface
+     * @param DelegateInterface $next
+     * @return Response|\Psr\Http\Message\ResponseInterface
      */
     public function handle(ServerRequestInterface $request, DelegateInterface $next)
     {

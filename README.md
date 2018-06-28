@@ -10,6 +10,23 @@ Users -> HTTP Request -> Cache Middleware -> Logic
 
 当再次请求相同url的时候，会直接命中缓存并返回。另外非 GET 的请求，会直接进行穿透，如果在高并发插入数据的情况下，建议结合队列的方式去减轻压力。
 
+### 使用
+
+```
+$ composer require fastd/cache-provider
+```
+
+添加到 service provider 配置中(`app.php`)
+
+```php
+<?php 
+return [
+    'services' => [
+        FastD\CacheProvider\CacheServiceProvider::class,        
+    ]
+];
+```
+
 ### Support
 
 如果你在使用中遇到问题，请联系: [bboyjanhuang@gmail.com](mailto:bboyjanhuang@gmail.com). 微博: [编码侠](http://weibo.com/ecbboyjan)

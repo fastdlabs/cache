@@ -34,7 +34,8 @@ class CacheMiddleware extends Middleware
         }
 
         $params = $request->getQueryParams();
-        asort($params, SORT_REGULAR);
+
+        $this->sortQueryParams($params);
 
         $key = md5($request->getUri()->getPath().'?'.http_build_query($params));
         $cache = cache()->getItem($key);
@@ -61,5 +62,18 @@ class CacheMiddleware extends Middleware
         cache()->save($cache->expiresAt($expireAt));
 
         return $response;
+    }
+
+    /**
+     * @param array $arr
+     */
+    protected function sortQueryParams(array &$arr)
+    {
+        ksort($arr);
+        array_walk($arr, function (&$item) {
+            if (is_array($item)) {
+                $this->sortQueryParams($item);
+            }
+        });
     }
 }

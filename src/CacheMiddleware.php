@@ -12,6 +12,7 @@ namespace FastD\CacheProvider;
 
 use FastD\Http\Response;
 use FastD\Middleware\DelegateInterface;
+use FastD\Middleware\Middleware;
 use FastD\Utils\DateObject;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -32,7 +33,8 @@ class CacheMiddleware extends Middleware
             return $next->process($request);
         }
 
-        $params = asort($request->getQueryParams());
+        $params = $request->getQueryParams();
+        asort($params, SORT_REGULAR);
 
         $key = md5($request->getUri()->getPath().'?'.http_build_query($params));
         $cache = cache()->getItem($key);

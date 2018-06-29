@@ -9,6 +9,7 @@
 
 namespace FastD\CacheProvider;
 
+
 use FastD\Http\Response;
 use FastD\Middleware\DelegateInterface;
 use FastD\Utils\DateObject;
@@ -30,7 +31,9 @@ class CacheMiddleware extends Middleware
             return $next->process($request);
         }
 
-        $key = md5($request->getUri()->getPath().http_build_query($request->getQueryParams()));
+        $params = asort($request->getQueryParams());
+
+        $key = md5($request->getUri()->getPath().'?'.http_build_query($params));
         $cache = cache()->getItem($key);
         if ($cache->isHit()) {
             list($content, $headers) = $cache->get();

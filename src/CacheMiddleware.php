@@ -24,6 +24,7 @@ class CacheMiddleware extends Middleware
      * @param ServerRequestInterface $request
      * @param DelegateInterface $next
      * @return Response|\Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function handle(ServerRequestInterface $request, DelegateInterface $next)
     {
@@ -46,7 +47,7 @@ class CacheMiddleware extends Middleware
             return $response;
         }
 
-        $expireAt = DateObject::createFromTimestamp(time() + config()->get('common.cache.lifetime', 60));
+        $expireAt = DateObject::makeFromTimestamp(time() + config()->get('common.cache.lifetime', 60));
 
         $response->withHeader('X-Cache', $key)->withExpires($expireAt);
 

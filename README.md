@@ -22,7 +22,7 @@ $ composer require fastd/cache-provider
 <?php 
 return [
     'services' => [
-        FastD\CacheProvider\CacheServiceProvider::class,        
+        \FastD\CacheProvider\ServiceProvider\CacheServiceProvider::class,        
     ]
 ];
 ```

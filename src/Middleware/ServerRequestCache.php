@@ -7,7 +7,7 @@
  * @see      http://www.fast-d.cn/
  */
 
-namespace FastD\CacheProvider;
+namespace FastD\CacheProvider\Middleware;
 
 
 use FastD\Http\Response;

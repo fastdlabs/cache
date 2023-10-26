@@ -1,7 +1,8 @@
 <?php
 
-namespace FastD\CacheProvider;
+namespace FastD\CacheProvider\ServiceProvider;
 
+use FastD\CacheProvider\Middleware\ServerRequestCache;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
 

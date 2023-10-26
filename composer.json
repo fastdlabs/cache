@@ -19,7 +19,8 @@
         "fastd/routing": "dev-develop",
         "fastd/http": "dev-develop",
         "fastd/swoole": "dev-develop",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^9.6",
+        "predis/predis": "^2.2"
     },
     "autoload": {
         "psr-4": {

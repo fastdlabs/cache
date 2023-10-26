@@ -50,6 +50,25 @@ class CacheServiceProviderTest extends TestCase
         $serviceProvider = new CacheServiceProvider();
         $this->container->register($serviceProvider);
         $cache = $this->container->get('cache');
-        $fileCache = $cache->getCache('redis');
+        $redisCache = $cache->getCache('redis');
+        $item = $redisCache->getItem('foo');
+        $value = 'bar';
+        if (!$item->isHit()) {
+            $item->set($value);
+            $redisCache->save($item);
+        }
+        $this->assertEquals($value, $redisCache->getItem('foo')->get());
+    }
+
+    public function testCacheHit()
+    {
+        $serviceProvider = new CacheServiceProvider();
+        $this->container->register($serviceProvider);
+        $cache = $this->container->get('cache');
+        $fileCache = $cache->getCache('file');
+        $redisCache = $cache->getCache('redis');
+        $value = 'bar';
+        $this->assertEquals($value, $fileCache->getItem('foo')->get());
+        $this->assertEquals($value, $redisCache->getItem('foo')->get());
     }
 }

@@ -41,7 +41,7 @@ class CachePool
     /**
      * @throws \ReflectionException
      */
-    protected function connect($key): AbstractAdapter
+    protected function connect(string $key): AbstractAdapter
     {
         if (!isset($this->config[$key])) {
             throw new \LogicException(sprintf('No set %s cache', $key));
@@ -74,7 +74,7 @@ class CachePool
         return $this->caches[$key];
     }
 
-    protected function getRedisAdapter(array $config, $key): AbstractAdapter
+    protected function getRedisAdapter(array $config, string $key): AbstractAdapter
     {
         $connect = null;
         try {
@@ -82,10 +82,10 @@ class CachePool
             $cache = new $config['adapter'](
                 $connect,
                 $config['params']['namespace'] ?? '',
-                $config['params']['lifetime'] ?? ''
+                $config['params']['lifetime'] ?? 0
             );
         } catch (\Exception $e) {
-            throw $e;
+            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
         }
 
         $this->redises[$key] = [

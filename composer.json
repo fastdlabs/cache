@@ -18,7 +18,8 @@
         "fastd/middleware": "dev-develop",
         "fastd/routing": "dev-develop",
         "fastd/http": "dev-develop",
-        "fastd/swoole": "dev-develop"
+        "fastd/swoole": "dev-develop",
+        "phpunit/phpunit": "^9.6"
     },
     "autoload": {
         "psr-4": {
@@ -27,5 +28,11 @@
         "files": [
             "helpers.php"
         ]
+    },
+    "autoload-dev": {
+        "tests": "tests"
+    },
+    "config": {
+        "bin-dir": "bin"
     }
 }

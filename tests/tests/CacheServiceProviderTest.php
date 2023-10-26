@@ -70,5 +70,6 @@ class CacheServiceProviderTest extends TestCase
         $value = 'bar';
         $this->assertEquals($value, $fileCache->getItem('foo')->get());
         $this->assertEquals($value, $redisCache->getItem('foo')->get());
+        $this->assertEquals($value, cache('redis')->getItem('foo')->get());
     }
 }

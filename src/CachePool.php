@@ -29,11 +29,6 @@ class CachePool
         $this->config = $config;
     }
 
-    /**
-     * @param $key
-     * @return AbstractAdapter|FilesystemAdapter|RedisAdapter
-     * @throws \ReflectionException
-     */
     protected function connect($key)
     {
         if (!isset($this->config[$key])) {
@@ -50,11 +45,6 @@ class CachePool
         return $this->getAdapter($config);
     }
 
-    /**
-     * @param $key
-     * @return AbstractAdapter
-     * @throws \ReflectionException
-     */
     public function getCache($key)
     {
         if (!isset($this->caches[$key])) {
@@ -73,9 +63,6 @@ class CachePool
         return $this->caches[$key];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function initPool()
     {
         foreach ($this->config as $name => $config) {
@@ -83,10 +70,6 @@ class CachePool
         }
     }
 
-    /**
-     * @param array $config
-     * @return FilesystemAdapter|RedisAdapter
-     */
     protected function getRedisAdapter(array $config, $key)
     {
         $connect = null;
@@ -94,8 +77,8 @@ class CachePool
             $connect = RedisAdapter::createConnection($config['params']['dsn']);
             $cache = new $config['adapter'](
                 $connect,
-                isset($config['params']['namespace']) ? $config['params']['namespace'] : '',
-                isset($config['params']['lifetime']) ? $config['params']['lifetime'] : ''
+                $config['params']['namespace'] ?? '',
+                $config['params']['lifetime'] ?? ''
             );
         } catch (\Exception $e) {
             $cache = new FilesystemAdapter('', 0, '/tmp/cache');
@@ -109,16 +92,12 @@ class CachePool
         return $cache;
     }
 
-    /**
-     * @param array $config
-     * @return AbstractAdapter
-     */
     protected function getAdapter(array $config)
     {
         return new $config['adapter'](
-            isset($config['params']['namespace']) ? $config['params']['namespace'] : '',
-            isset($config['params']['lifetime']) ? $config['params']['lifetime'] : '',
-            isset($config['params']['directory']) ? $config['params']['directory'] : app()->getPath().'/runtime/cache'
+            $config['params']['namespace'] ?? '',
+            $config['params']['lifetime'] ?? '',
+            $config['params']['directory'] ?? app()->getPath() . '/runtime/cache'
         );
     }
 }

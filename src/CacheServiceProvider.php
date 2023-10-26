@@ -25,6 +25,6 @@ class CacheServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container): void
     {
-        $container->get('dispatcher')->push(new CacheMiddleware());
+        $container->get('dispatcher')->push(new ServerRequestCache());
     }
 }

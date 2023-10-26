@@ -11,7 +11,6 @@ namespace FastD\CacheProvider;
 
 
 use FastD\Http\Response;
-use FastD\Middleware\DelegateInterface;
 use FastD\Middleware\Middleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Class CacheMiddleware.
  */
-class CacheMiddleware extends Middleware
+class ServerRequestCache extends Middleware
 {
     protected array $cacheParams = [];
 

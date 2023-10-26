@@ -8,11 +8,17 @@
         }
     ],
     "require": {
-        "PHP": ">=5.6"
+        "PHP": ">=7.4 || ^8.0",
+        "symfony/cache": "^5.4"
     },
     "require-dev": {
-        "fastd/fastd": "^3.1",
-        "fastd/utils": "*"
+        "fastd/fastd": "dev-develop",
+        "fastd/container": "dev-develop",
+        "fastd/config": "dev-develop",
+        "fastd/middleware": "dev-develop",
+        "fastd/routing": "dev-develop",
+        "fastd/http": "dev-develop",
+        "fastd/swoole": "dev-develop"
     },
     "autoload": {
         "psr-4": {

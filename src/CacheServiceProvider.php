@@ -23,8 +23,8 @@ class CacheServiceProvider implements ServiceProviderInterface
      * @param Container $container
      * @return mixed
      */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
-        app()->get('dispatcher')->before(new CacheMiddleware());
+        $container->get('dispatcher')->push(new CacheMiddleware());
     }
 }

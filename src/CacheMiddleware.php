@@ -13,24 +13,26 @@ namespace FastD\CacheProvider;
 use FastD\Http\Response;
 use FastD\Middleware\DelegateInterface;
 use FastD\Middleware\Middleware;
-use FastD\Utils\DateObject;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Class CacheMiddleware.
  */
 class CacheMiddleware extends Middleware
 {
+    protected array $cacheParams = [];
+
     /**
      * @param ServerRequestInterface $request
-     * @param DelegateInterface $next
-     * @return Response|\Psr\Http\Message\ResponseInterface
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request, DelegateInterface $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ('GET' !== $request->getMethod()) {
-            return $next->process($request);
+            return $handler->handle($request);
         }
 
         $params = $request->getQueryParams();
@@ -44,7 +46,7 @@ class CacheMiddleware extends Middleware
             return new Response($content, Response::HTTP_OK, $headers);
         }
 
-        $response = $next->process($request);
+        $response = $handler->handle($request);
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             return $response;
         }

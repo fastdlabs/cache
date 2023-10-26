@@ -36,14 +36,19 @@ class ServerRequestCache extends Middleware
             return $handler->handle($request);
         }
 
-        $params = $request->getQueryParams();
         // 取配置参数
+        $queryParams = $request->getQueryParams();
+        $params = config()->get('cache.http.params');
+        $values = array_map(fn($param) => $queryParams[$param] ?? null, $params);
+        // 检查获取值是否匹配，或者参数为空，则不进行缓存
+        if (empty($values) || count($params) !== count($values)) {
+            return $handler->handle($request);
+        }
         asort($params, SORT_REGULAR);
-        $key = md5($request->getUri()->getPath() . '?' . http_build_query($params));
+        $key = md5($request->getUri()->getPath() . http_build_query($values));
         $cache = cache('http')->getItem($key);
         if ($cache->isHit()) {
             list($content, $headers) = $cache->get();
-
             return new Response($content, Response::HTTP_OK, $headers);
         }
 
@@ -51,16 +56,11 @@ class ServerRequestCache extends Middleware
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             return $response;
         }
-
         $expireAt = new DateTime();
         $expireAt->setTimestamp(time() + config()->get('cache.http.lifetime', 60));
-
         $response->withHeader('X-Cache', $key)->withExpires($expireAt);
-
         $cache->set([(string)$response->getBody(), $response->getHeaders(),]);
-
         cache('http')->save($cache->expiresAt($expireAt));
-
         return $response;
     }
 }

@@ -26,7 +26,7 @@ class CacheServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container): void
     {
-        $config = $container->get('config')->get('cache', []);
+        $config = config()->load(app()->getPath() . '/src/config/cache.php');
 
         $container->add('cache', new CachePool($config));
 

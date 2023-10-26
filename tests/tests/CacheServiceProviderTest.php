@@ -2,15 +2,12 @@
 
 namespace tests;
 
-use FastD\Application;
 use FastD\CacheProvider\CachePool;
 use FastD\CacheProvider\ServiceProvider\CacheServiceProvider;
 use FastD\Config\Config;
 use FastD\Container\Container;
-use FastD\Runtime\FPM\FastCGI;
 use FastD\Runtime\Runtime;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Cache\CacheItem;
 
 class CacheServiceProviderTest extends TestCase
 {

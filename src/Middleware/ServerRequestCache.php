@@ -10,6 +10,7 @@
 namespace FastD\CacheProvider\Middleware;
 
 
+use DateTime;
 use FastD\Http\Response;
 use FastD\Middleware\Middleware;
 use Psr\Http\Message\ResponseInterface;
@@ -36,10 +37,10 @@ class ServerRequestCache extends Middleware
         }
 
         $params = $request->getQueryParams();
+        // 取配置参数
         asort($params, SORT_REGULAR);
-
         $key = md5($request->getUri()->getPath() . '?' . http_build_query($params));
-        $cache = cache()->getItem($key);
+        $cache = cache('http')->getItem($key);
         if ($cache->isHit()) {
             list($content, $headers) = $cache->get();
 
@@ -51,13 +52,14 @@ class ServerRequestCache extends Middleware
             return $response;
         }
 
-        $expireAt = DateObject::makeFromTimestamp(time() + config()->get('common.cache.lifetime', 60));
+        $expireAt = new DateTime();
+        $expireAt->setTimestamp(time() + config()->get('cache.http.lifetime', 60));
 
         $response->withHeader('X-Cache', $key)->withExpires($expireAt);
 
         $cache->set([(string)$response->getBody(), $response->getHeaders(),]);
 
-        cache()->save($cache->expiresAt($expireAt));
+        cache('http')->save($cache->expiresAt($expireAt));
 
         return $response;
     }

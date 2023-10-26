@@ -7,10 +7,10 @@
  * @see      http://www.fast-d.cn/
  */
 
-namespace FastD\CacheProvider\ServiceProvider;
+namespace FastD\Cache\ServiceProvider;
 
 
-use FastD\CacheProvider\CachePool;
+use FastD\Cache\CachePool;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
 

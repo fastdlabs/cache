@@ -1,9 +1,8 @@
 <?php
 
-namespace tests;
 
-use FastD\CacheProvider\CachePool;
-use FastD\CacheProvider\ServiceProvider\CacheServiceProvider;
+use FastD\Cache\CachePool;
+use FastD\Cache\ServiceProvider\CacheServiceProvider;
 use FastD\Config\Config;
 use FastD\Container\Container;
 use FastD\Runtime\Runtime;

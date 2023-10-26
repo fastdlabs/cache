@@ -1,6 +1,6 @@
 <?php
 
-namespace FastD\CacheProvider;
+namespace FastD\Cache;
 
 use ReflectionClass;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;

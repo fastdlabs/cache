@@ -7,7 +7,7 @@
  * @see      http://www.fast-d.cn/
  */
 
-namespace FastD\CacheProvider\Middleware;
+namespace FastD\Cache\Middleware;
 
 
 use DateTime;

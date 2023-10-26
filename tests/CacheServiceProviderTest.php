@@ -87,15 +87,19 @@ class CacheServiceProviderTest extends TestCase
         $serverRequestProvider = new ServerRequestCacheProvider();
         $this->container->register($serviceProvider);
         $this->container->register($serverRequestProvider);
-        $response = $dispatcher->dispatch(new ServerRequest('GET', '/?channel=baidu'));
-        $this->assertEquals('hello', (string)$response->getBody());
-        $this->assertNotEmpty($response->getHeaderLine('X-Cache'));
-        $response = $dispatcher->dispatch(new ServerRequest('GET', '/?tag=abc‘'));
-        $this->assertNotEmpty($response->getHeaderLine('X-Cache'));
-        $response = $dispatcher->dispatch(new ServerRequest('GET', '/'));
-        $this->assertNotEmpty($response->getHeaderLine('X-Cache'));
-        $response = $dispatcher->dispatch(new ServerRequest('GET', '/?channel=iqiyi'));
-        $this->assertNotEmpty($response->getHeaderLine('X-Cache'));
+        $response1 = $dispatcher->dispatch(new ServerRequest('GET', '/?foo=bar'));
+        $this->assertEquals('hello', (string)$response1->getBody());
+        $this->assertNotEmpty($response1->getHeaderLine('X-Cache'));
+        $response2 = $dispatcher->dispatch(new ServerRequest('GET', '/?bar=foo‘'));
+        $this->assertNotEmpty($response2->getHeaderLine('X-Cache'));
+        $response3 = $dispatcher->dispatch(new ServerRequest('GET', '/'));
+        $this->assertNotEmpty($response3->getHeaderLine('X-Cache'));
+        $response4 = $dispatcher->dispatch(new ServerRequest('GET', '/?foo=boll'));
+        $this->assertNotEmpty($response4->getHeaderLine('X-Cache'));
+        $this->assertTrue($response1->getHeaderLine('X-Cache') !== $response4->getHeaderLine('X-Cache'));
+        $this->assertTrue($response1->getHeaderLine('X-Cache') !== $response2->getHeaderLine('X-Cache'));
+        $this->assertTrue($response3->getHeaderLine('X-Cache') == $response2->getHeaderLine('X-Cache'));
+        $this->assertEquals($response3->getHeaderLine('X-Cache'), $response2->getHeaderLine('X-Cache'));
     }
 
     public function sayHello()

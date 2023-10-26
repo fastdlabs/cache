@@ -16,6 +16,6 @@ return [
         'params' => [
             'lifetime' => 60,
         ],
-        'keys' => ['channel'],
+        'keys' => ['foo'],
     ],
 ];

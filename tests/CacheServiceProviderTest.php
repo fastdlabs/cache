@@ -100,6 +100,7 @@ class CacheServiceProviderTest extends TestCase
         $this->assertTrue($response1->getHeaderLine('X-Cache') !== $response2->getHeaderLine('X-Cache'));
         $this->assertTrue($response3->getHeaderLine('X-Cache') == $response2->getHeaderLine('X-Cache'));
         $this->assertEquals($response3->getHeaderLine('X-Cache'), $response2->getHeaderLine('X-Cache'));
+        $this->assertEquals(120, $response4->getMaxAge());
     }
 
     public function sayHello()

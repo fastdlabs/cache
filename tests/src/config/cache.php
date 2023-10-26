@@ -14,7 +14,7 @@ return [
     'http' => [
         'adapter' => \Symfony\Component\Cache\Adapter\FilesystemAdapter::class,
         'params' => [
-            'lifetime' => 60,
+            'lifetime' => 120,
         ],
         'keys' => ['foo'],
     ],

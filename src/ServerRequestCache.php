@@ -38,7 +38,7 @@ class ServerRequestCache extends Middleware
         $params = $request->getQueryParams();
         asort($params, SORT_REGULAR);
 
-        $key = md5($request->getUri()->getPath().'?'.http_build_query($params));
+        $key = md5($request->getUri()->getPath() . '?' . http_build_query($params));
         $cache = cache()->getItem($key);
         if ($cache->isHit()) {
             list($content, $headers) = $cache->get();
@@ -55,10 +55,7 @@ class ServerRequestCache extends Middleware
 
         $response->withHeader('X-Cache', $key)->withExpires($expireAt);
 
-        $cache->set([
-            (string) $response->getBody(),
-            $response->getHeaders(),
-        ]);
+        $cache->set([(string)$response->getBody(), $response->getHeaders(),]);
 
         cache()->save($cache->expiresAt($expireAt));
 

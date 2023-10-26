@@ -3,6 +3,7 @@
 namespace FastD\CacheProvider;
 
 use ReflectionClass;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
@@ -30,7 +31,7 @@ class CachePool
         $this->config = $config;
     }
 
-    public function initConnections()
+    public function initConnections(): void
     {
         foreach ($this->config as $name => $config) {
             $this->getCache($name);
@@ -40,7 +41,7 @@ class CachePool
     /**
      * @throws \ReflectionException
      */
-    protected function connect($key)
+    protected function connect($key): AbstractAdapter
     {
         if (!isset($this->config[$key])) {
             throw new \LogicException(sprintf('No set %s cache', $key));
@@ -56,7 +57,7 @@ class CachePool
         return $this->getAdapter($config);
     }
 
-    public function getCache($key)
+    public function getCache(string $key): AbstractAdapter
     {
         if (!isset($this->caches[$key])) {
             $this->caches[$key] = $this->connect($key);
@@ -74,7 +75,7 @@ class CachePool
         return $this->caches[$key];
     }
 
-    protected function getRedisAdapter(array $config, $key)
+    protected function getRedisAdapter(array $config, $key): RedisAdapter
     {
         $connect = null;
         try {
@@ -96,7 +97,7 @@ class CachePool
         return $cache;
     }
 
-    protected function getAdapter(array $config)
+    protected function getAdapter(array $config): AbstractAdapter
     {
         return new $config['adapter'](
             $config['params']['namespace'] ?? '',

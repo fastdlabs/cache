@@ -47,7 +47,6 @@ class CachePool
             throw new \LogicException(sprintf('No set %s cache', $key));
         }
         $config = $this->config[$key];
-
         // 解决使用了自定义的 RedisAdapter 时无法正常创建的问题
         if (
             $config['adapter'] === RedisAdapter::class
@@ -75,7 +74,7 @@ class CachePool
         return $this->caches[$key];
     }
 
-    protected function getRedisAdapter(array $config, $key): RedisAdapter
+    protected function getRedisAdapter(array $config, $key): AbstractAdapter
     {
         $connect = null;
         try {
@@ -86,7 +85,7 @@ class CachePool
                 $config['params']['lifetime'] ?? ''
             );
         } catch (\Exception $e) {
-            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+            throw $e;
         }
 
         $this->redises[$key] = [
@@ -101,8 +100,8 @@ class CachePool
     {
         return new $config['adapter'](
             $config['params']['namespace'] ?? '',
-            $config['params']['lifetime'] ?? '',
-            $config['params']['directory'] ?? app()->getPath() . '/runtime/cache'
+            $config['params']['lifetime'] ?? 0,
+            $config['params']['directory'] ?? '/tmp/cache'
         );
     }
 }

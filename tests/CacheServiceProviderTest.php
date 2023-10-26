@@ -17,7 +17,7 @@ class CacheServiceProviderTest extends TestCase
         $this->container = new Container();
         $config = new Config();
         $config->merge([
-            'cache' => load(__DIR__ . '/../cache.php')
+            'cache' => load(__DIR__ . '/cache.php')
         ]);
         $this->container->add('config', $config);
         Runtime::$container = $this->container;

@@ -12,9 +12,10 @@ return [
     ],
     // middleware 配置
     'http' => [
-        'lifetime' => 60,
+        'adapter' => \Symfony\Component\Cache\Adapter\FilesystemAdapter::class,
         'params' => [
-
-        ]
+            'lifetime' => 60,
+        ],
+        'keys' => ['channel'],
     ],
 ];

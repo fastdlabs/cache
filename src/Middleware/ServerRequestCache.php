@@ -35,17 +35,18 @@ class ServerRequestCache extends Middleware
         if ('GET' !== $request->getMethod()) {
             return $handler->handle($request);
         }
-
-        // 取配置参数
+        // 匹配缓存条件，queryString 为空，或者queryString 参数 匹配上配置的参数
         $queryParams = $request->getQueryParams();
-        $params = config()->get('cache.http.params');
-        $values = array_map(fn($param) => $queryParams[$param] ?? null, $params);
-        // 检查获取值是否匹配，或者参数为空，则不进行缓存
-        if (empty($values) || count($params) !== count($values)) {
-            return $handler->handle($request);
+        // 取配置参数
+        $paramHash = '';
+        if (!empty($keys = config()->get('cache.http.keys'))) {
+            $values = array_intersect_key($queryParams, array_flip($keys));
+            asort($values, SORT_REGULAR);
+            $paramHash = http_build_query($values);
+            unset($values, $keys);
         }
-        asort($params, SORT_REGULAR);
-        $key = md5($request->getUri()->getPath() . http_build_query($values));
+
+        $key = md5($request->getUri()->getPath() . $paramHash);
         $cache = cache('http')->getItem($key);
         if ($cache->isHit()) {
             list($content, $headers) = $cache->get();
@@ -57,7 +58,7 @@ class ServerRequestCache extends Middleware
             return $response;
         }
         $expireAt = new DateTime();
-        $expireAt->setTimestamp(time() + config()->get('cache.http.lifetime', 60));
+        $expireAt->setTimestamp(time() + config()->get('cache.http.params.lifetime', 60));
         $response->withHeader('X-Cache', $key)->withExpires($expireAt);
         $cache->set([(string)$response->getBody(), $response->getHeaders(),]);
         cache('http')->save($cache->expiresAt($expireAt));

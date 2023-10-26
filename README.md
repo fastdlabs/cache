@@ -1,6 +1,6 @@
-# Cache Provider
+# Cache 
 
-Cache Provider 是参考于 Varnish 架构中的缓存机制，不过仅支持 PHP 代码层面缓存功能。
+Cache 是参考于 Varnish 架构中的缓存机制，不过仅支持 PHP 代码层面缓存功能。
 
 原理:
 

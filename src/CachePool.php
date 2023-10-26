@@ -2,22 +2,23 @@
 
 namespace FastD\CacheProvider;
 
+use ReflectionClass;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+
 class CachePool
 {
-    /**
-     * @var AbstractAdapter[]
-     */
-    protected $caches = [];
+    protected array $caches = [];
 
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var array
      */
-    protected $redises = [];
+    protected array $redises = [];
 
     /**
      * Cache constructor.
@@ -29,6 +30,16 @@ class CachePool
         $this->config = $config;
     }
 
+    public function initConnections()
+    {
+        foreach ($this->config as $name => $config) {
+            $this->getCache($name);
+        }
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
     protected function connect($key)
     {
         if (!isset($this->config[$key])) {
@@ -61,13 +72,6 @@ class CachePool
         }
 
         return $this->caches[$key];
-    }
-
-    public function initPool()
-    {
-        foreach ($this->config as $name => $config) {
-            $this->getCache($name);
-        }
     }
 
     protected function getRedisAdapter(array $config, $key)

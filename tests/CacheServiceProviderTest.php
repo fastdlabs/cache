@@ -1,6 +1,7 @@
 <?php
 
 
+use FastD\Application;
 use FastD\Cache\CachePool;
 use FastD\Cache\ServiceProvider\CacheServiceProvider;
 use FastD\Cache\ServiceProvider\ServerRequestCacheProvider;
@@ -9,7 +10,6 @@ use FastD\Container\Container;
 use FastD\Http\ServerRequest;
 use FastD\Routing\RouteCollection;
 use FastD\Routing\RouteDispatcher;
-use FastD\Runtime\Runtime;
 use PHPUnit\Framework\TestCase;
 
 class CacheServiceProviderTest extends TestCase
@@ -18,14 +18,15 @@ class CacheServiceProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->container = new Container();
-        $config = new Config();
-        $config->merge([
-            'cache' => load(__DIR__ . '/src/config/cache.php')
+        $this->container = new Application([
+            'env' => 'tests',
+            'path' => __DIR__,
+            'app' => [],
+            'routes' => [],
+            'services' => [],
+            'cache' => __DIR__ . '/config/cache.php',
         ]);
-        $this->container->add('config', $config);
-        Runtime::$container = $this->container;
-        Runtime::$application = new \FastD\Application(__DIR__ . '/');
+        new \FastD\Server\FastCGI($this->container);
     }
 
     public function testProviderInContainer()
@@ -87,15 +88,20 @@ class CacheServiceProviderTest extends TestCase
         $serverRequestProvider = new ServerRequestCacheProvider();
         $this->container->register($serviceProvider);
         $this->container->register($serverRequestProvider);
+
         $response1 = $dispatcher->dispatch(new ServerRequest('GET', '/?foo=bar'));
         $this->assertEquals('hello', (string)$response1->getBody());
         $this->assertNotEmpty($response1->getHeaderLine('X-Cache'));
+
         $response2 = $dispatcher->dispatch(new ServerRequest('GET', '/?bar=foo‘'));
         $this->assertNotEmpty($response2->getHeaderLine('X-Cache'));
+
         $response3 = $dispatcher->dispatch(new ServerRequest('GET', '/'));
         $this->assertNotEmpty($response3->getHeaderLine('X-Cache'));
+
         $response4 = $dispatcher->dispatch(new ServerRequest('GET', '/?foo=boll'));
         $this->assertNotEmpty($response4->getHeaderLine('X-Cache'));
+
         $this->assertTrue($response1->getHeaderLine('X-Cache') !== $response4->getHeaderLine('X-Cache'));
         $this->assertTrue($response1->getHeaderLine('X-Cache') !== $response2->getHeaderLine('X-Cache'));
         $this->assertTrue($response3->getHeaderLine('X-Cache') == $response2->getHeaderLine('X-Cache'));

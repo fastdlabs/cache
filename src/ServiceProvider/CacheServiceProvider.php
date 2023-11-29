@@ -10,6 +10,7 @@
 namespace FastD\Cache\ServiceProvider;
 
 
+use Exception;
 use FastD\Cache\CachePool;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
@@ -23,11 +24,12 @@ class CacheServiceProvider implements ServiceProviderInterface
     /**
      * @param Container $container
      * @return mixed
+     * @throws Exception
      */
     public function register(Container $container): void
     {
-        $config = app()->getBootstrap('cache');
-        config()->merge(['cache' => $config]);
+        $config = config()->replace(app()->getBootstrap('cache'));
+        config()->add(['cache' => $config]);
         $container->add('cache', new CachePool($config));
         unset($config);
     }

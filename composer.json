@@ -1,6 +1,7 @@
 {
     "name": "fastd/cache",
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "JanHuang",
@@ -8,8 +9,9 @@
         }
     ],
     "require": {
-        "PHP": ">=7.4 || ^8.0",
-        "symfony/cache": "^5.4"
+        "PHP": ">=8.2",
+        "symfony/cache": "^8.0",
+        "predis/predis": "^3.0"
     },
     "require-dev": {
         "fastd/fastd": "dev-develop",
@@ -19,8 +21,9 @@
         "fastd/routing": "dev-develop",
         "fastd/http": "dev-develop",
         "fastd/swoole": "dev-develop",
-        "phpunit/phpunit": "^9.6",
-        "predis/predis": "^2.2"
+        "fastd/medoodb": "dev-develop",
+        "symfony/console": "^8.0",
+        "phpunit/phpunit": "^9.6"
     },
     "autoload": {
         "psr-4": {
@@ -32,8 +35,5 @@
     },
     "autoload-dev": {
         "tests": "tests"
-    },
-    "config": {
-        "bin-dir": "bin"
     }
 }

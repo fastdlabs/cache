@@ -1,107 +1,96 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FastD\Cache;
 
-use ReflectionClass;
+use ErrorException;
+use FastD\Server\Events\CallbackEventsInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Throwable;
 
-class CachePool
+class CachePool implements CallbackEventsInterface
 {
     protected array $caches = [];
 
-    /**
-     * @var array
-     */
-    protected array $config;
+    protected array $connections = [];
 
-    /**
-     * @var array
-     */
-    protected array $redises = [];
-
-    /**
-     * Cache constructor.
-     *
-     * @param array $config
-     */
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     public function initConnections(): void
     {
-        foreach ($this->config as $name => $config) {
-            $this->getCache($name);
+        foreach ($this->config as $key => $config) {
+            if (isset($config['adapter']['dsn'])) {
+                $this->connect($key);
+            }
         }
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    protected function connect(string $key): AbstractAdapter
+    public function connect(string $key): mixed
     {
         if (!isset($this->config[$key])) {
-            throw new \LogicException(sprintf('No set %s cache', $key));
+            throw new ErrorException(sprintf('No set %s cache config.', $key));
         }
-        $config = $this->config[$key];
-        // 解决使用了自定义的 RedisAdapter 时无法正常创建的问题
-        if (
-            $config['adapter'] === RedisAdapter::class
-            || (new ReflectionClass($config['adapter']))->isSubclassOf(RedisAdapter::class)) {
-            return $this->getRedisAdapter($config, $key);
+
+        $config = $this->config[$key]['adapter'];
+        $dsn = $config['dsn'];
+        $options = $config['options'] ?? [];
+
+        if (isset($this->connections[$key])) {
+            $connection = $this->connections[$key];
+
+            $needsReconnect = match (true) {
+                $connection instanceof RedisAdapter => !$connection->ping(),
+                $connection instanceof MemcachedAdapter => !$connection->getStats(),
+                default => false
+            };
+
+            if ($needsReconnect) {
+                $this->connections[$key] = null;
+            }
         }
-        return $this->getAdapter($config);
+
+        return $this->connections[$key] ??= match (parse_url($dsn, PHP_URL_SCHEME)) {
+            'redis', 'rediss' => RedisAdapter::createConnection($dsn, $options),
+            'memcached' => MemcachedAdapter::createConnection($dsn, $options),
+            default => throw new \InvalidArgumentException("Unsupported DSN scheme: " . parse_url($dsn, PHP_URL_SCHEME))
+        };
+    }
+
+    public function getAdapter(string $key): AbstractAdapter
+    {
+        $namespace = $this->config[$key]['namespace'] ?? '';
+        if (isset($this->config[$key]['adapter']['dsn'])) {
+            $namespace = $this->connect($key);
+        }
+
+        return new $this->config[$key]['adapter']['class'](
+            $namespace,
+            $this->config[$key]['lifetime'] ?? 0,
+            $this->config[$key]['directory'] ?? ''
+        );
     }
 
     public function getCache(string $key): AbstractAdapter
     {
         if (!isset($this->caches[$key])) {
-            $this->caches[$key] = $this->connect($key);
+            $this->caches[$key] = $this->getAdapter($key);
         }
-
-        if (isset($this->redises[$key])) {
-            if (
-                null === $this->redises[$key]['connect']
-                || false === $this->redises[$key]['connect']->ping()
-            ) {
-                $this->caches[$key] = $this->connect($key);
-            }
-        }
-
         return $this->caches[$key];
     }
 
-    protected function getRedisAdapter(array $config, string $key): AbstractAdapter
+    public function onCallback(): bool
     {
-        $connect = null;
         try {
-            $connect = RedisAdapter::createConnection($config['params']['dsn']);
-            $cache = new $config['adapter'](
-                $connect,
-                $config['params']['namespace'] ?? '',
-                $config['params']['lifetime'] ?? 0
-            );
-        } catch (\Exception $e) {
-            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+            $this->initConnections();
+            return true;
+        } catch (Throwable $e) {
+            return false;
         }
-
-        $this->redises[$key] = [
-            'connect' => $connect,
-            'driver' => RedisAdapter::class,
-        ];
-
-        return $cache;
-    }
-
-    protected function getAdapter(array $config): AbstractAdapter
-    {
-        return new $config['adapter'](
-            $config['params']['namespace'] ?? '',
-            $config['params']['lifetime'] ?? 0,
-            $config['params']['directory'] ?? '/tmp/cache'
-        );
     }
 }

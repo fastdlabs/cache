@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 function cache(string $name): AbstractAdapter
 {
-    if (!function_exists('app')) {
+    if (!function_exists('container')) {
         throw new Exception('Cache service provider is not register');
     }
 
-    return app()->get('cache')->getCache($name);
+    return container()->got('cache')->getCache($name);
 }

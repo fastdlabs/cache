@@ -86,11 +86,7 @@ class CachePool implements CallbackEventsInterface
 
     public function onCallback(): bool
     {
-        try {
-            $this->initConnections();
-            return true;
-        } catch (Throwable $e) {
-            return false;
-        }
+        $this->initConnections();
+        return true;
     }
 }

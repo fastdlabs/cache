@@ -13,7 +13,8 @@ class CacheServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container): void
     {
-        $container->add('cache', new CachePool($container->need('cache')));
-        $container->add('onWorkerStart', [new CachePool($container->need('cache'))]);
+        $cachePool = new CachePool($container->need('cache'));
+        $container->add('cache', $cachePool);
+        $container->add('onWorkerStart', [$cachePool]);
     }
 }

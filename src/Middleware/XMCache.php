@@ -14,7 +14,7 @@ use FastD\Http\Response\StatusCode;
 use FastD\Http\Response\Text;
 use DateTime;
 
-class HttpCache extends Middleware
+class XMCache extends Middleware
 {
     const CacheName = 'httpCache';
     

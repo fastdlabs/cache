@@ -10,8 +10,7 @@
     ],
     "require": {
         "PHP": ">=8.2",
-        "symfony/cache": "^8.0",
-        "predis/predis": "^3.0"
+        "symfony/cache": "^8.0"
     },
     "require-dev": {
         "fastd/fastd": "dev-develop",
@@ -23,6 +22,7 @@
         "fastd/swoole": "dev-develop",
         "fastd/medoodb": "dev-develop",
         "symfony/console": "^8.0",
+        "predis/predis": "^3.0",
         "phpunit/phpunit": "^9.6"
     },
     "autoload": {

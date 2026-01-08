@@ -1,73 +1,73 @@
 # FastD Cache
 
+高性能 PHP 缓存库，基于 Symfony Cache 组件，专为 FastD 框架设计。
+
 [![Latest Stable Version](https://poser.pugx.org/fastd/cache/v/stable)](https://packagist.org/packages/fastd/cache)
 [![Total Downloads](https://poser.pugx.org/fastd/cache/downloads)](https://packagist.org/packages/fastd/cache)
 [![License](https://poser.pugx.org/fastd/cache/license)](https://packagist.org/packages/fastd/cache)
 
-FastD Cache 是一个高性能的 PHP 缓存库，专为 [FastD PHP 框架](https://github.com/fastdlabs/fastd) 设计。它参考了 Varnish 架构中的缓存机制，提供了从底层缓存到 HTTP 层面的完整缓存解决方案。
 
-## 🚀 主要特性
+[文档指南](docs/) | [问题反馈](https://github.com/fastdlabs/cache/issues)
 
-- **高性能缓存** - 基于 Symfony Cache 组件，支持多种缓存适配器
-- **灵活配置** - 支持文件系统、Redis、Memcached 等多种缓存后端
-- **连接池管理** - 自动管理缓存连接，提高性能
-- **HTTP 中间件** - 内置 HTTP 缓存中间件，支持页面级缓存
-- **服务提供者** - 完整的服务容器集成
-- **辅助函数** - 简洁的 `cache()` 辅助函数调用
+## 特性
 
-## 📖 文档
+- 多层缓存架构（缓存池 + HTTP 中间件）
+- 高性能设计（连接池、适配器复用）
+- 灵活配置（支持文件、Redis、Memcached）
+- 开箱即用（简洁 API，丰富配置）
 
-完整的文档请查看 [docs/](docs/) 目录：
+## 文档
 
-- [项目概述](docs/overview.md) - 详细介绍项目架构、设计理念和技术特性
-- [API 参考](docs/api/) - 核心类和方法的详细说明及使用示例
-- [安装与使用](docs/installation/) - 安装指南、配置说明和实际应用案例
+- [项目概述](docs/overview.md) - 架构设计和核心概念
+- [安装指南](docs/installation/) - 环境配置和使用说明  
+- [API 参考](docs/api/) - 类方法和配置选项
+- [使用案例](docs/installation/#实际应用案例) - 实战示例
 
-## 🛠️ 快速开始
+## 快速开始
 
-### 安装
+### 环境依赖
+
+- PHP >= 8.2
+- Composer
+- Symfony Cache ^8.0
+
+### 安装配置
 
 ```bash
 composer require fastd/cache
 ```
 
-### 基本配置
-
-1. 在 `config/cache.php` 中添加配置：
+创建配置文件 `config/cache.php`：
 
 ```php
 <?php
-
 return [
     'file' => [
         'adapter' => [
             'class' => \Symfony\Component\Cache\Adapter\FilesystemAdapter::class,
         ],
-        'namespace' => 'myapp',
+        'namespace' => 'app',
         'lifetime' => 3600,
         'directory' => __DIR__ . '/../runtime/cache/',
-    ],
-];
-```
-
-2. 在 `app.php` 中注册服务提供者：
-
-```php
-<?php 
-
-return [
-    'services' => [
-        \FastD\Cache\ServiceProvider\CacheServiceProvider::class,
-        // 可选：启用 HTTP 缓存中间件
-        \FastD\Cache\ServiceProvider\ServerRequestCacheProvider::class,
     ]
 ];
 ```
 
-### 基本使用
+注册服务提供者 `app.php`：
 
 ```php
-// 使用辅助函数快速访问缓存
+<?php
+return [
+    'services' => [
+        \FastD\Cache\ServiceProvider\CacheServiceProvider::class,
+    ]
+];
+```
+
+### 基础使用
+
+```php
+// 获取缓存适配器
 $cache = cache('file');
 
 // 存储数据
@@ -79,76 +79,52 @@ $cache->save($item);
 $item = $cache->getItem('user_123');
 if ($item->isHit()) {
     $user = $item->get();
-    echo $user['name'];
 }
 ```
 
-## 🔧 支持的缓存适配器
+详细使用说明请查看[安装指南](docs/installation/)
 
-- **文件系统缓存** - `FilesystemAdapter`
-- **Redis 缓存** - `RedisAdapter`
-- **Memcached 缓存** - `MemcachedAdapter`
-- **PHP 文件缓存** - `PhpFilesAdapter`
+## 支持的适配器
 
-## 🏗️ 架构原理
+- File System - 开发环境，简单可靠
+- Redis - 高并发场景，性能极高  
+- Memcached - 键值缓存，配置简单
+- PHP Files - 高频读取，性能最优
 
-```
-用户请求 → HTTP 中间件 → 缓存检查 → 应用逻辑
-    ↑                                    ↓
-    ←←←←←←← 缓存命中直接返回 ←←←←←←←← 缓存存储
-```
+各适配器详细配置请查看[文档](docs/installation/#缓存适配器配置)
 
-工作流程：
-1. GET 请求到达时，中间件首先检查是否有对应缓存
-2. 缓存命中则直接返回缓存内容
-3. 缓存未命中则执行应用逻辑，并将结果缓存
-4. 非 GET 请求直接穿透，不进行缓存
+## 工作原理
 
-## 📋 系统要求
+GET 请求 → 缓存检查 → 应用逻辑
 
-- PHP >= 8.2
-- Composer
-- Symfony Cache 组件
+- GET 请求缓存，其他请求直通
+- CRC32 算法生成高效缓存键
+- 内置连接池管理连接复用
 
-## 🧪 运行测试
+## 测试
 
 ```bash
 composer install
 ./vendor/bin/phpunit
 ```
 
-## 🤝 贡献
+## 贡献
 
-欢迎提交 Issue 和 Pull Request！
+欢迎提交 Issues 和 Pull Requests。
 
-## 📞 支持
+```bash
+git clone https://github.com/fastdlabs/cache.git
+cd cache
+composer install
+composer test
+```
 
-如果你在使用中遇到问题，请联系：
+## 学习资源
 
-- Email: [bboyjanhuang@gmail.com](mailto:bboyjanhuang@gmail.com)
-- 微博: [编码侠](http://weibo.com/ecbboyjan)
-- GitHub Issues: [提交问题](https://github.com/fastdlabs/cache/issues)
+- [官方文档](docs/) - 完整使用指南
+- [问题反馈](https://github.com/fastdlabs/cache/issues) - Bug 报告
+- [讨论区](https://github.com/fastdlabs/cache/discussions) - 技术交流
 
-## 📄 许可证
+## 许可证
 
 MIT License
-
-Copyright (c) 2024 JanHuang
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

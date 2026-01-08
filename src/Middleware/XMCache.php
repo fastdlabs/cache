@@ -16,6 +16,8 @@ use DateTime;
 
 class HttpCache extends Middleware
 {
+    const CacheName = 'httpCache';
+    
     const HeaderKey = 'X-M-Cache';
 
     const HeaderStatusKey = 'X-M-Cache-Status';
@@ -38,7 +40,7 @@ class HttpCache extends Middleware
         // 取配置参数，version 为缓存版本，可通过设置版本进行缓存开关或者其他处理
         $version = 1;
         $config = config()->parsed->get('cache.httpCache', []);
-        $cache = cache('httpCache');
+        $cache = cache(static::CacheName);
 
         // 如果存在请求缓存 key，优先判断
         $requestCacheKey = $request->getHeaderLine(static::HeaderKey);

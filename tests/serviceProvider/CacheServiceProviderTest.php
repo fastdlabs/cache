@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use FastD\Cache\CachePool;
+namespace serviceProvider;
+
 use FastD\Cache\ServiceProvider\CacheServiceProvider;
-use FastD\Cache\ServiceProvider\ServerRequestCacheProvider;
 use FastD\Container\Container;
 use PHPUnit\Framework\TestCase;
 
@@ -18,9 +18,9 @@ class CacheServiceProviderTest extends TestCase
         $this->container = $this->getMockBuilder(Container::class)
             ->addMethods(['config'])
             ->getMock();
-        
+
         $this->container->method('config')
-            ->willReturnCallback(function($key) {
+            ->willReturnCallback(function ($key) {
                 $configs = [
                     'cache' => [
                         'file' => [
@@ -40,13 +40,13 @@ class CacheServiceProviderTest extends TestCase
     {
         $serviceProvider = new CacheServiceProvider();
         $this->assertInstanceOf(CacheServiceProvider::class, $serviceProvider);
-        
+
         // 测试服务提供者的 register 方法存在
         $this->assertTrue(method_exists($serviceProvider, 'register'));
-        
+
         // 由于 FastD Container 类结构复杂，我们只测试基本功能
         $this->assertTrue(true); // 简单的通过测试
-        
+
         $this->addToAssertionCount(1); // 确保测试计数正确
     }
 
@@ -54,7 +54,7 @@ class CacheServiceProviderTest extends TestCase
     {
         $serviceProvider = new CacheServiceProvider();
         $this->assertInstanceOf(CacheServiceProvider::class, $serviceProvider);
-        
+
         // 跳过需要真实缓存连接的测试
         $this->markTestSkipped('Skipping actual cache connection test');
     }
@@ -78,7 +78,7 @@ class CacheServiceProviderTest extends TestCase
     {
         $serviceProvider = new CacheServiceProvider();
         $this->assertInstanceOf(CacheServiceProvider::class, $serviceProvider);
-        
+
         // 跳过需要真实缓存操作的测试
         $this->markTestSkipped('Skipping actual cache hit test');
     }

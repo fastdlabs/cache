@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace middleware;
+
 use FastD\Cache\CachePool;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -26,7 +28,7 @@ class ConfigurationTest extends TestCase
         $this->assertInstanceOf(CachePool::class, $cachePool);
 
         // 验证配置被正确存储
-        $reflection = new ReflectionClass($cachePool);
+        $reflection = new \ReflectionClass($cachePool);
         $configProperty = $reflection->getProperty('config');
         $configProperty->setAccessible(true);
         $storedConfig = $configProperty->getValue($cachePool);
@@ -63,7 +65,7 @@ class ConfigurationTest extends TestCase
         ];
 
         $cachePool = new CachePool($config);
-        
+
         // 测试可以获取不同类型的缓存适配器
         $fileAdapter = $cachePool->getAdapter('file');
         $this->assertInstanceOf(FilesystemAdapter::class, $fileAdapter);
@@ -116,13 +118,13 @@ class ConfigurationTest extends TestCase
 
             $cachePool = new CachePool($config);
             $this->assertInstanceOf(CachePool::class, $cachePool);
-            
+
             // 验证配置被正确存储
-            $reflection = new ReflectionClass($cachePool);
+            $reflection = new \ReflectionClass($cachePool);
             $configProperty = $reflection->getProperty('config');
             $configProperty->setAccessible(true);
             $storedConfig = $configProperty->getValue($cachePool);
-            
+
             $this->assertEquals($enableValue, $storedConfig['xmCache']['enable']);
         }
     }

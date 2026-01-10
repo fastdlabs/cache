@@ -46,7 +46,7 @@ class CachePoolTest extends TestCase
     {
         $cachePool = new CachePool($this->testConfig);
         $this->assertInstanceOf(CachePool::class, $cachePool);
-        $reflection = new ReflectionClass($cachePool);
+        $reflection = new \ReflectionClass($cachePool);
         $configProperty = $reflection->getProperty('config');
         $configProperty->setAccessible(true);
         $this->assertEquals($this->testConfig, $configProperty->getValue($cachePool));

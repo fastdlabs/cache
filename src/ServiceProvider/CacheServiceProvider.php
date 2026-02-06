@@ -7,6 +7,7 @@ namespace FastD\Cache\ServiceProvider;
 use ErrorException;
 use Exception;
 use FastD\Cache\CachePool;
+use FastD\Cache\Listener\BootedEventListener;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
 
@@ -23,6 +24,6 @@ class CacheServiceProvider implements ServiceProviderInterface
 
         $cachePool = new CachePool($config);
         $container->add('cache', $cachePool);
-        $container->add('onWorkerStart', [$cachePool]);
+        $container->got('event')->addListener(new BootedEventListener());
     }
 }

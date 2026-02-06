@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace FastD\Cache;
 
 use ErrorException;
-use FastD\Server\Events\CallbackEventsInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Throwable;
 
-class CachePool implements CallbackEventsInterface
+class CachePool
 {
     protected array $caches = [];
 
@@ -82,11 +81,5 @@ class CachePool implements CallbackEventsInterface
             $this->caches[$key] = $this->getAdapter($key);
         }
         return $this->caches[$key];
-    }
-
-    public function onCallback(): bool
-    {
-        $this->initConnections();
-        return true;
     }
 }

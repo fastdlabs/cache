@@ -1,7 +1,6 @@
 {
     "name": "fastd/cache",
     "license": "MIT",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "JanHuang",

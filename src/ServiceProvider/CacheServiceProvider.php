@@ -15,15 +15,20 @@ class CacheServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container): void
     {
-        try {
-            $config = $container->config('cache');
-        } catch (ErrorException $e) {
-            $file = container()->getRootPath() . '/config/cache.php';
-            $config = config()->parse($file)->get('cache');
+        // 从容器获取配置
+        if ($container->has('config')) {
+            $config = $container->get('config');
+            $cacheConfig = is_array($config) ? ($config['cache'] ?? []) : [];
+        } else {
+            $cacheConfig = [];
         }
 
-        $cachePool = new CachePool($config);
+        $cachePool = new CachePool($cacheConfig);
         $container->add('cache', $cachePool);
-        $container->get('event')->addListener(new BootedEventListener());
+        
+        // 如果事件组件可用，注册监听器
+        if ($container->has('event')) {
+            $container->get('event')->addListener(new BootedEventListener());
+        }
     }
 }

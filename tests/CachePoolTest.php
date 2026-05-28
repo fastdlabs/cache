@@ -135,35 +135,11 @@ class CachePoolTest extends TestCase
         $cachePool->getAdapter('invalid_scheme');
     }
 
-    public function testOnCallbackInitializesConnections(): void
-    {
-        // 使用无 DSN 配置避免 Redis 连接
-        $noDSNConfig = [
-            'file' => [
-                'adapter' => [
-                    'class' => FilesystemAdapter::class,
-                    'dsn' => null,
-                ],
-                'namespace' => 'test_file',
-                'lifetime' => 3600,
-                'directory' => sys_get_temp_dir(),
-            ],
-        ];
-        
-        $cachePool = new CachePool($noDSNConfig);
-        $result = $cachePool->onCallback();
-        
-        $this->assertTrue($result);
-        
-        // Verify connections array exists but is empty (no DSN configs)
-        $reflection = new ReflectionClass($cachePool);
-        $connectionsProperty = $reflection->getProperty('connections');
-        $connectionsProperty->setAccessible(true);
-        $connections = $connectionsProperty->getValue($cachePool);
-        
-        $this->assertIsArray($connections);
-        $this->assertCount(0, $connections);
-    }
+    // public function testOnCallbackInitializesConnections(): void
+    // {
+    //     // onCallback method removed from CachePool
+    //     $this->markTestSkipped('onCallback method not available');
+    // }
 
     public function testInitConnections(): void
     {

@@ -24,6 +24,6 @@ class CacheServiceProvider implements ServiceProviderInterface
 
         $cachePool = new CachePool($config);
         $container->add('cache', $cachePool);
-        $container->got('event')->addListener(new BootedEventListener());
+        $container->get('event')->addListener(new BootedEventListener());
     }
 }

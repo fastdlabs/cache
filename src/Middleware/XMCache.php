@@ -16,7 +16,7 @@ use DateTime;
 
 class XMCache extends Middleware
 {
-    const CacheName = 'httpCache';
+    const CacheName = 'xmCache';
     
     const HeaderKey = 'X-M-Cache';
 
@@ -78,7 +78,7 @@ class XMCache extends Middleware
             return null;
         }
 
-        $cacheResponse = new Text($content, StatusCode::HTTP_OK, $headers);
+        $cacheResponse = new Text(StatusCode::HTTP_OK, $content, $headers);
         $cacheResponse->withHeader(static::HeaderStatusKey, 'HIT');
         return $cacheResponse;
     }

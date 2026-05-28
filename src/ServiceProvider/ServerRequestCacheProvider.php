@@ -20,7 +20,7 @@ class ServerRequestCacheProvider implements ServiceProviderInterface
             $config = config()->parse($file)->get('cache');
         }
         if (isset($config['xmCache']['enable']) && $config['xmCache']['enable']) {
-            $container->get('dispatcher')->push(new XMCache());
+            $container->get('matcher')->push(new XMCache());
         }
     }
 }

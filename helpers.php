@@ -10,5 +10,5 @@ function cache(string $name): AbstractAdapter
         throw new Exception('Cache service provider is not register');
     }
 
-    return container()->got('cache')->getCache($name);
+    return container()->get('cache')->getCache($name);
 }

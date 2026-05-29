@@ -116,8 +116,12 @@ class XMCache extends Middleware
         $lifetime = $config['lifetime'] ?? 60;
         $expireAt = new DateTime();
         $expireAt->modify("+{$lifetime} seconds");
+        $expireAt->setTimezone(new \DateTimeZone('GMT'));
 
-        $response = $response->withHeader(static::HeaderKey, $cacheKey)->withHeader('Expires', $expireAt->format(DATE_RFC7231));
+        // Format Expires header according to RFC 7231 (always in GMT)
+        $expiresFormatted = $expireAt->format('D, d M Y H:i:s') . ' GMT';
+        
+        $response = $response->withHeader(static::HeaderKey, $cacheKey)->withHeader('Expires', $expiresFormatted);
 
         // 缓存响应数据
         $cacheData = [

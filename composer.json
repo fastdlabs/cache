@@ -29,5 +29,10 @@
     },
     "autoload-dev": {
         "tests": "tests"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover=build/logs/clover.xml --coverage-html=build/coverage",
+        "test-coverage-clover": "phpunit --coverage-clover=build/logs/clover.xml"
     }
 }

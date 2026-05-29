@@ -1,0 +1,90 @@
+# Scrutinizer CI Configuration
+# https://scrutinizer-ci.com/docs/configuration
+
+build:
+  environment:
+    php:
+      version: 8.2
+  
+  tests:
+    override:
+      -
+        command: 'vendor/bin/phpunit --coverage-clover=build/logs/clover.xml'
+        coverage:
+          file: 'build/logs/clover.xml'
+          format: 'clover'
+
+checks:
+  php:
+    code_rating: true
+    duplication: true
+    removal_of_debug_output: true
+    security_vulnerabilities: true
+    
+    # Coding Standards
+    psr4_compliant: true
+    psr12_strict: true
+    
+    # Code Quality
+    no_unused_parameters: true
+    no_unused_variables: true
+    no_unused_functions: true
+    no_empty_statements: true
+    no_goto: true
+    no_eval: true
+    no_exit: true
+    
+    # Best Practices
+    verify_property_names: true
+    verify_argument_usable_as_reference: true
+    verify_access_scope_valid: true
+    
+    # Complexity
+    method_complexity:
+      enabled: true
+      max_complexity: 10
+
+filter:
+  excluded_paths:
+    - 'tests/*'
+    - 'vendor/*'
+    - 'build/*'
+    - 'docs/*'
+
+tools:
+  # PHP Analyzers
+  php_analyzer: true
+  php_code_sniffer:
+    config:
+      standard: 'PSR12'
+    filter:
+      paths:
+        - 'src/*'
+  php_mess_detector:
+    filter:
+      paths:
+        - 'src/*'
+  php_cpd:
+    filter:
+      paths:
+        - 'src/*'
+  
+  # External Tools
+  sensiolabs_security_checker: true
+  php_sim:
+    min_mass: 16
+  
+  # Code Coverage
+  external_code_coverage:
+    timeout: 600
+
+coding_style:
+  php:
+    indentation:
+      default: space
+      size: 4
+    spaces:
+      around_operators:
+        concatenation: true
+      other:
+        after_type_cast: false

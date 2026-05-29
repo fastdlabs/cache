@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FastD\Cache\Middleware;
 
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
 use FastD\Middleware\Middleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,12 +30,6 @@ class XMCache extends Middleware
             return $handler->handle($request);
         }
 
-        $response = $handler->handle($request);
-        // 非 200 不缓存
-        if (StatusCode::HTTP_OK !== $response->getStatusCode()) {
-            return $response;
-        }
-
         // 取配置参数，version 为缓存版本，可通过设置版本进行缓存开关或者其他处理
         $version = 1;
         $config = config()->parsed->get('cache.httpCache', []);
@@ -59,6 +52,12 @@ class XMCache extends Middleware
             return $cachedResponse;
         }
 
+        $response = $handler->handle($request);
+        // 非 200 不缓存
+        if (StatusCode::HTTP_OK !== $response->getStatusCode()) {
+            return $response;
+        }
+
         return $this->cacheResponse($request, $response, $cache, $generatedCacheKey, $config);
     }
 
@@ -70,15 +69,13 @@ class XMCache extends Middleware
             return null;
         }
 
-        $data = $cached->get();
-        
+        [$content, $headers] = $cached->get();
+
         // 验证缓存数据的完整性
-        if (!is_array($data) || !isset($data[0], $data[1]) || !is_string($data[0]) || !is_array($data[1])) {
+        if (!is_string($content) || !is_array($headers)) {
             $cache->deleteItem($cacheKey);
             return null;
         }
-
-        [$content, $headers] = $data;
 
         $cacheResponse = new Text(StatusCode::HTTP_OK, $content, $headers);
         return $cacheResponse->withHeader(static::HeaderStatusKey, 'HIT');
@@ -102,7 +99,7 @@ class XMCache extends Middleware
 
         // 使用路径和参数生成缓存键
         $keySource = $path . ($paramHash ? '?' . $paramHash : '') . $version;
-        return 'mh' . sprintf("%u", crc32($keySource));
+        return 'mc' . sprintf("%u", crc32($keySource));
     }
 
     private function cacheResponse(

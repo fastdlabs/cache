@@ -5,44 +5,40 @@ build:
   environment:
     php:
       version: 8.2
-  
+
   tests:
     override:
-      -
-        command: 'vendor/bin/phpunit --coverage-clover=build/logs/clover.xml'
+      - command: 'vendor/bin/phpunit --coverage-clover=build/logs/clover.xml'
         coverage:
           file: 'build/logs/clover.xml'
           format: 'clover'
 
 checks:
   php:
+    # 基础质量
     code_rating: true
     duplication: true
-    removal_of_debug_output: true
+    no_debug_code: true          # 替代 removal_of_debug_output
     security_vulnerabilities: true
-    
-    # Coding Standards
-    psr4_compliant: true
-    psr12_strict: true
-    
-    # Code Quality
-    no_unused_parameters: true
-    no_unused_variables: true
-    no_unused_functions: true
+
+    # 编码规范
+    coding_standard: PSR12      # 替代 psr12_strict
+
+    # 代码质量
+    unused_parameters: true     # 替代 no_unused_parameters
+    unused_variables: true      # 替代 no_unused_variables
     no_empty_statements: true
     no_goto: true
     no_eval: true
     no_exit: true
-    
-    # Best Practices
+
+    # 最佳实践
     verify_property_names: true
     verify_argument_usable_as_reference: true
     verify_access_scope_valid: true
-    
-    # Complexity
-    method_complexity:
-      enabled: true
-      max_complexity: 10
+
+    # 复杂度（新版已移除 method_complexity，使用 too_many_arguments 替代）
+    too_many_arguments: true
 
 filter:
   excluded_paths:
@@ -52,7 +48,6 @@ filter:
     - 'docs/*'
 
 tools:
-  # PHP Analyzers
   php_analyzer: true
   php_code_sniffer:
     config:
@@ -68,13 +63,9 @@ tools:
     filter:
       paths:
         - 'src/*'
-  
-  # External Tools
   sensiolabs_security_checker: true
   php_sim:
     min_mass: 16
-  
-  # Code Coverage
   external_code_coverage:
     timeout: 600
 

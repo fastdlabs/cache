@@ -1,0 +1,47 @@
+# Travis CI Configuration
+# https://docs.travis-ci.com/
+
+language: php
+
+php:
+  - '8.2'
+  - '8.3'
+  - '8.4'
+
+matrix:
+  fast_finish: true
+  include:
+    - php: '8.2'
+      env: RUN_TESTS=true
+    - php: '8.3'
+      env: RUN_TESTS=true
+    - php: '8.4'
+      env: RUN_TESTS=true
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - composer self-update --quiet
+
+install:
+  - composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+before_script:
+  - mkdir -p build/logs
+
+script:
+  - if [[ "$RUN_TESTS" == "true" ]]; then vendor/bin/phpunit --coverage-clover=build/logs/clover.xml; fi
+
+after_success:
+  # Send code coverage to Scrutinizer
+  - if [[ "$RUN_TESTS" == "true" && "$TRAVIS_PHP_VERSION" == "8.2" ]]; then
+    wget https://scrutinizer-ci.com/ocular.phar &&
+    php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml;
+    fi
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change

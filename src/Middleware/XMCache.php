@@ -70,17 +70,18 @@ class XMCache extends Middleware
             return null;
         }
 
-        [$content, $headers] = $cached->get();
-
+        $data = $cached->get();
+        
         // 验证缓存数据的完整性
-        if (!is_string($content) || !is_array($headers)) {
-            $cache->deleteItem($cached);
+        if (!is_array($data) || !isset($data[0], $data[1]) || !is_string($data[0]) || !is_array($data[1])) {
+            $cache->deleteItem($cacheKey);
             return null;
         }
 
+        [$content, $headers] = $data;
+
         $cacheResponse = new Text(StatusCode::HTTP_OK, $content, $headers);
-        $cacheResponse->withHeader(static::HeaderStatusKey, 'HIT');
-        return $cacheResponse;
+        return $cacheResponse->withHeader(static::HeaderStatusKey, 'HIT');
     }
 
     private function generateCacheKey(ServerRequestInterface $request, array $config, int $version): string

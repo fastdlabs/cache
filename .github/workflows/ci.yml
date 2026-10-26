@@ -11,6 +11,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_ROOT_VERSION: '8.1.1'
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP

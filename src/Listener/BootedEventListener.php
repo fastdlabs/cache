@@ -12,7 +12,7 @@ class BootedEventListener extends EventListener
     public function process(object $event): void
     {
         if (container()->getRuntime() == 'swoole') {
-            container()->got('cache')->initConnections();
+            container()->get('cache')->initConnections();
         }
     }
 

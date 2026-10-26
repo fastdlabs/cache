@@ -19,6 +19,8 @@ class CacheServiceProviderTest extends TestCase
             ->addMethods(['config'])
             ->getMock();
 
+        $this->container->add('config', new \stdClass());
+
         $this->container->method('config')
             ->willReturnCallback(function ($key) {
                 $configs = [

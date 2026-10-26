@@ -29,6 +29,11 @@ final class ServerRequestConfigTest extends TestCase
     {
         $matcher = new ConfigTestMatcher();
         $container = new class extends Container {
+            public function __construct()
+            {
+                $this->add('config', new stdClass());
+            }
+
             public function config(string $key): array
             {
                 return ['httpCache' => ['enable' => true, 'lifetime' => 60]];
@@ -46,6 +51,11 @@ final class ServerRequestConfigTest extends TestCase
     {
         $matcher = new ConfigTestMatcher();
         $container = new class extends Container {
+            public function __construct()
+            {
+                $this->add('config', new stdClass());
+            }
+
             public function config(string $key): array
             {
                 return ['xmCache' => ['enable' => true, 'lifetime' => 60]];
@@ -56,6 +66,14 @@ final class ServerRequestConfigTest extends TestCase
         (new ServerRequestCacheProvider())->register($container);
 
         $this->assertCount(1, $matcher->pushed);
+    }
+
+
+    public function testProviderThrowsWhenConfigServiceMissing(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        (new ServerRequestCacheProvider())->register(new Container());
     }
 
     public function testXMCachePrefersHttpCacheKey(): void

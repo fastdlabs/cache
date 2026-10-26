@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace FastD\Cache\ServiceProvider;
 
-use ErrorException;
 use FastD\Cache\Middleware\XMCache;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
+use RuntimeException;
 
 class ServerRequestCacheProvider implements ServiceProviderInterface
 {
     public function register(Container $container): void
     {
-        try {
-            $config = $container->config('cache');
-        } catch (ErrorException $e) {
-            $file = container()->getRootPath() . '/config/cache.php';
-            $config = config()->parse($file)->get('cache');
+        if (!$container->has('config')) {
+            throw new RuntimeException('The FastD config service is not registered.');
         }
-        $config = is_array($config) ? $config : [];
+
+        $config = $container->config('cache');
+
+        if (!is_array($config)) {
+            throw new RuntimeException('The cache configuration is missing.');
+        }
+
         $httpCache = $config['httpCache'] ?? $config['xmCache'] ?? [];
         $httpCache = is_array($httpCache) ? $httpCache : [];
 

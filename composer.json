@@ -14,7 +14,7 @@
     "require-dev": {
         "symfony/console": "^8.0",
         "predis/predis": "^3.0",
-        "phpunit/phpunit": "^9.6",
+        "phpunit/phpunit": "^10.0",
         "fastd/fastd": "^8.1"
     },
     "extra": {

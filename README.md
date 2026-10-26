@@ -30,7 +30,7 @@
 
 ### 环境依赖
 
-- PHP >= 8.2
+- PHP >= 8.4
 - Composer
 - Symfony Cache ^8.0
 

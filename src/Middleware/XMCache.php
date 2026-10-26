@@ -33,7 +33,7 @@ class XMCache extends Middleware
 
         // 取配置参数，version 为缓存版本，可通过设置版本进行缓存开关或者其他处理
         $version = 1;
-        $config = config()->parsed->get('cache.httpCache', []);
+        $config = $this->config();
         $cache = cache(static::CacheName);
 
         // 如果存在请求缓存 key，优先判断
@@ -66,6 +66,21 @@ class XMCache extends Middleware
         }
 
         return $this->cacheResponse($request, $response, $cache, $generatedCacheKey, $config);
+    }
+
+    /**
+     * httpCache 为规范配置；兼容历史 xmCache 配置键。
+     */
+    private function config(): array
+    {
+        $parsed = config()->parsed;
+        $config = $parsed->get('cache.httpCache', []);
+
+        if (!is_array($config) || $config === []) {
+            $config = $parsed->get('cache.xmCache', []);
+        }
+
+        return is_array($config) ? $config : [];
     }
 
     private function getFromCache(AbstractAdapter $cache, string $cacheKey): ?ResponseInterface

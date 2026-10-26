@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use FastD\Http\Response\StatusCode;
+use FastD\Http\Response\StreamingResponseInterface;
 use FastD\Http\Response\Text;
 use DateTime;
 
@@ -53,6 +54,12 @@ class XMCache extends Middleware
         }
 
         $response = $handler->handle($request);
+
+        // 流式响应（SSE 等）不参与缓存
+        if ($response instanceof StreamingResponseInterface) {
+            return $response;
+        }
+
         // 非 200 不缓存
         if (StatusCode::HTTP_OK !== $response->getStatusCode()) {
             return $response;
@@ -110,6 +117,11 @@ class XMCache extends Middleware
         array $config
     ): ResponseInterface
     {
+        // 流式响应（SSE 等）不参与缓存（双保险：正常流程已在 process() 返回）
+        if ($response instanceof StreamingResponseInterface) {
+            return $response;
+        }
+
         // 设置缓存过期时间
         $lifetime = $config['lifetime'] ?? 60;
         $expireAt = new DateTime();

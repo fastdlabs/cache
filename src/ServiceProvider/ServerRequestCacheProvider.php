@@ -19,7 +19,11 @@ class ServerRequestCacheProvider implements ServiceProviderInterface
             $file = container()->getRootPath() . '/config/cache.php';
             $config = config()->parse($file)->get('cache');
         }
-        if (isset($config['xmCache']['enable']) && $config['xmCache']['enable']) {
+        $config = is_array($config) ? $config : [];
+        $httpCache = $config['httpCache'] ?? $config['xmCache'] ?? [];
+        $httpCache = is_array($httpCache) ? $httpCache : [];
+
+        if (!empty($httpCache['enable'])) {
             $container->get('matcher')->push(new XMCache());
         }
     }

@@ -16,7 +16,7 @@
         "predis/predis": "^3.0",
         "phpunit/phpunit": "^9.6",
         "fastd/container": "^8.0",
-        "fastd/http": "^8.0",
+        "fastd/http": "^8.1",
         "fastd/middleware": "^8.0"
     },
     "autoload": {

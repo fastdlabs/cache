@@ -43,7 +43,7 @@ FastD Cache 是一个专门为 [FastD PHP 框架](https://github.com/fastdlabs/f
 ```json
 {
     "require": {
-        "PHP": ">=8.2",
+        "php": ">=8.4",
         "symfony/cache": "^8.0",
         "predis/predis": "^3.0"
     }

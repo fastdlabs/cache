@@ -8,8 +8,8 @@
         }
     ],
     "require": {
-        "PHP": ">=8.2",
-        "symfony/cache": "^8.0"
+        "symfony/cache": "^8.0",
+        "php": ">=8.4"
     },
     "require-dev": {
         "symfony/console": "^8.0",

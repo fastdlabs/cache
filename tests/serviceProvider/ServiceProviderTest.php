@@ -62,6 +62,7 @@ class ServiceProviderTest extends TestCase
                 ],
             ]);
         
+        $mockContainer->add('config', new stdClass());
         $provider->register($mockContainer);
         
         // 验证服务提供者正确实现了接口

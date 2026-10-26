@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace FastD\Cache\ServiceProvider;
 
-use ErrorException;
-use Exception;
 use FastD\Cache\CachePool;
 use FastD\Cache\Listener\BootedEventListener;
 use FastD\Container\Container;
 use FastD\Container\ServiceProviderInterface;
+use RuntimeException;
 
 class CacheServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container): void
     {
-        try {
-            $config = $container->config('cache');
-        } catch (ErrorException $e) {
-            $file = container()->getRootPath() . '/config/cache.php';
-            $config = config()->parse($file)->get('cache');
+        if (!$container->has('config')) {
+            throw new RuntimeException('The FastD config service is not registered.');
         }
 
-        $cachePool = new CachePool($config);
-        $container->add('cache', $cachePool);
-        
-        // 如果事件组件可用，注册监听器
+        $config = $container->config('cache');
+
+        if (!is_array($config)) {
+            throw new RuntimeException('The cache configuration is invalid.');
+        }
+
+        $container->add('cache', new CachePool($config));
+
         if ($container->has('event')) {
             $container->get('event')->addListener(new BootedEventListener());
         }

@@ -20,8 +20,8 @@ class CacheServiceProvider implements ServiceProviderInterface
 
         $config = $container->config('cache');
 
-        if (!is_array($config) || $config === []) {
-            throw new RuntimeException('The cache configuration is missing.');
+        if (!is_array($config)) {
+            throw new RuntimeException('The cache configuration is invalid.');
         }
 
         $container->add('cache', new CachePool($config));

@@ -15,9 +15,12 @@
         "symfony/console": "^8.0",
         "predis/predis": "^3.0",
         "phpunit/phpunit": "^9.6",
-        "fastd/container": "^8.0",
-        "fastd/http": "^8.1",
-        "fastd/middleware": "^8.0"
+        "fastd/fastd": "^8.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "8.1.x-dev"
+        }
     },
     "autoload": {
         "psr-4": {

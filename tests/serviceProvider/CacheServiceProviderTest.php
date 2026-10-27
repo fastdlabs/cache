@@ -14,28 +14,25 @@ class CacheServiceProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        // 创建带 config 方法的 Mock 容器
-        $this->container = $this->getMockBuilder(Container::class)
-            ->addMethods(['config'])
-            ->getMock();
+        $this->container = new class extends Container {
+            public function __construct()
+            {
+                $this->add('config', new \stdClass());
+            }
 
-        $this->container->add('config', new \stdClass());
-
-        $this->container->method('config')
-            ->willReturnCallback(function ($key) {
-                $configs = [
-                    'cache' => [
-                        'file' => [
-                            'adapter' => [
-                                'class' => \Symfony\Component\Cache\Adapter\FilesystemAdapter::class,
-                            ],
-                            'namespace' => 'test',
-                            'lifetime' => 3600,
+            public function config(string $key): array
+            {
+                return [
+                    'file' => [
+                        'adapter' => [
+                            'class' => \Symfony\Component\Cache\Adapter\FilesystemAdapter::class,
                         ],
+                        'namespace' => 'test',
+                        'lifetime' => 3600,
                     ],
                 ];
-                return $configs[$key] ?? null;
-            });
+            }
+        };
     }
 
     public function testProviderInContainer(): void

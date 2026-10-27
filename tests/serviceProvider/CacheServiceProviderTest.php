@@ -49,14 +49,6 @@ class CacheServiceProviderTest extends TestCase
         $this->addToAssertionCount(1); // 确保测试计数正确
     }
 
-    public function testCacheConnect(): void
-    {
-        $serviceProvider = new CacheServiceProvider();
-        $this->assertInstanceOf(CacheServiceProvider::class, $serviceProvider);
-
-        // 跳过需要真实缓存连接的测试
-        $this->markTestSkipped('Skipping actual cache connection test');
-    }
 
     /*public function testRedisConnect()
     {
@@ -73,17 +65,5 @@ class CacheServiceProviderTest extends TestCase
         $this->assertEquals($value, $redisCache->getItem('foo')->get());
     }*/
 
-    public function testCacheHit(): void
-    {
-        $serviceProvider = new CacheServiceProvider();
-        $this->assertInstanceOf(CacheServiceProvider::class, $serviceProvider);
 
-        // 跳过需要真实缓存操作的测试
-        $this->markTestSkipped('Skipping actual cache hit test');
-    }
-
-    public function testServerRequestProvider(): void
-    {
-        $this->markTestSkipped('Requires FastD routing components');
-    }
 }

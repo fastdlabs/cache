@@ -1,5 +1,6 @@
 {
     "name": "fastd/cache",
+    "description": "Multi-layer cache and HTTP cache middleware for FastD, backed by Symfony Cache.",
     "license": "MIT",
     "authors": [
         {

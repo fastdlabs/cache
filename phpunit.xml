@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         colors="true" 
-         bootstrap="vendor/autoload.php" 
-         cacheResult="true" 
-         backupGlobals="false">
-  
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.4/phpunit.xsd" colors="true" bootstrap="vendor/autoload.php" recordTestRunHistory="true" backupGlobals="false">
   <source>
     <include>
       <directory suffix=".php">src</directory>
     </include>
-  </source><testsuites>
+  </source>
+  <testsuites>
     <testsuite name="cache">
       <directory>tests</directory>
     </testsuite>

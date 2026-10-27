@@ -2,7 +2,7 @@
 
 高性能 PHP 缓存库，基于 Symfony Cache 组件，专为 FastD 框架设计。
 
-[![Build Status](https://app.travis-ci.com/fastdlabs/cache.svg?branch=master)](https://app.travis-ci.com/fastdlabs/cache)
+[![CI](https://github.com/fastdlabs/cache/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fastdlabs/cache/actions/workflows/ci.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fastdlabs/cache/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fastdlabs/cache/)
 [![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/fastdlabs/cache/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/fastdlabs/cache/)
 [![Latest Stable Version](https://poser.pugx.org/fastd/cache/v/stable)](https://packagist.org/packages/fastd/cache)

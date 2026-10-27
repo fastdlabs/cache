@@ -51,7 +51,6 @@ class ServiceProviderTest extends TestCase
             ->getMock();
         
         $mockContainer->method('config')
-            ->with('cache')
             ->willReturn([
                 'file' => [
                     'adapter' => [

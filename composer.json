@@ -9,14 +9,14 @@
     ],
     "require": {
         "symfony/cache": "^8.0",
-        "php": ">=8.4"
+        "php": ">=8.4.1"
     },
     "require-dev": {
         "symfony/console": "^8.0",
         "predis/predis": "^3.0",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^13.4",
         "fastd/fastd": "^8.1",
-        "phpstan/phpstan": "^1.12.24"
+        "phpstan/phpstan": "^2.3"
     },
     "extra": {
         "branch-alias": {

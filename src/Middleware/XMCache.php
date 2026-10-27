@@ -31,6 +31,11 @@ class XMCache extends Middleware
             return $handler->handle($request);
         }
 
+        // 带 Cookie/Authorization 或显式禁缓存的请求不进入缓存
+        if ($this->shouldBypassRequest($request)) {
+            return $handler->handle($request);
+        }
+
         // 取配置参数，version 为缓存版本，可通过设置版本进行缓存开关或者其他处理
         $version = 1;
         $config = $this->config();
@@ -60,12 +65,44 @@ class XMCache extends Middleware
             return $response;
         }
 
+        // Set-Cookie / private / no-store / Vary Cookie 等响应不缓存
+        if ($this->shouldBypassResponse($response)) {
+            return $response;
+        }
+
         // 非 200 不缓存
         if (StatusCode::HTTP_OK !== $response->getStatusCode()) {
             return $response;
         }
 
         return $this->cacheResponse($request, $response, $cache, $generatedCacheKey, $config);
+    }
+
+    private function shouldBypassRequest(ServerRequestInterface $request): bool
+    {
+        if ($request->getHeaderLine('Authorization') !== '' || $request->getHeaderLine('Cookie') !== '') {
+            return true;
+        }
+
+        $cacheControl = strtolower($request->getHeaderLine('Cache-Control'));
+
+        return str_contains($cacheControl, 'no-store') || str_contains($cacheControl, 'no-cache');
+    }
+
+    private function shouldBypassResponse(ResponseInterface $response): bool
+    {
+        if ($response->hasHeader('Set-Cookie')) {
+            return true;
+        }
+
+        $cacheControl = strtolower($response->getHeaderLine('Cache-Control'));
+        if (str_contains($cacheControl, 'private') || str_contains($cacheControl, 'no-store')) {
+            return true;
+        }
+
+        $vary = strtolower($response->getHeaderLine('Vary'));
+
+        return str_contains($vary, 'cookie') || str_contains($vary, 'authorization');
     }
 
     /**
@@ -134,6 +171,11 @@ class XMCache extends Middleware
     {
         // 流式响应（SSE 等）不参与缓存（双保险：正常流程已在 process() 返回）
         if ($response instanceof StreamingResponseInterface) {
+            return $response;
+        }
+
+        // 隐私/禁止缓存响应双保险
+        if ($this->shouldBypassResponse($response)) {
             return $response;
         }
 

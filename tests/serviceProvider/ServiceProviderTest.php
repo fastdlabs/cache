@@ -5,6 +5,7 @@ declare(strict_types=1);
 use FastD\Cache\ServiceProvider\CacheServiceProvider;
 use FastD\Cache\ServiceProvider\ServerRequestCacheProvider;
 use FastD\Container\Container;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
 // 创建 Mock 容器类来模拟 FastD 容器行为
@@ -41,6 +42,7 @@ class ServiceProviderTest extends TestCase
         $this->container = new MockContainer();
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testCacheServiceProviderRegister(): void
     {
         $provider = new CacheServiceProvider();
@@ -68,20 +70,8 @@ class ServiceProviderTest extends TestCase
         $this->assertInstanceOf(CacheServiceProvider::class, $provider);
     }
 
-    public function testCacheServiceProviderWithoutCacheConfig(): void
-    {
-        $this->markTestSkipped('Skipping test that requires external dependencies');
-    }
 
-    public function testServerRequestCacheProviderRegister(): void
-    {
-        $this->markTestSkipped('Skipping test that requires external dependencies');
-    }
 
-    public function testServerRequestCacheProviderWithoutDispatcher(): void
-    {
-        $this->markTestSkipped('Skipping test that requires external dependencies');
-    }
 
     public function testServiceProviderInterfaceImplementation(): void
     {
@@ -97,10 +87,6 @@ class ServiceProviderTest extends TestCase
         $this->assertTrue(method_exists($requestProvider, 'register'));
     }
 
-    public function testMultipleRegistrations(): void
-    {
-        $this->markTestSkipped('Skipping complex integration test');
-    }
 
     // 基础类存在性测试
     public function testServiceProviderClassesExist(): void

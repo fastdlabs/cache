@@ -135,11 +135,6 @@ class CachePoolTest extends TestCase
         $cachePool->getAdapter('invalid_scheme');
     }
 
-    public function testOnCallbackInitializesConnections(): void
-    {
-        // onCallback method is not available in current version
-        $this->markTestSkipped('onCallback method not available in CachePool');
-    }
 
     public function testInitConnections(): void
     {
